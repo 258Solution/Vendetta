@@ -1,130 +1,524 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Painel MozVendas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Vendoo</title>
 
-    header {
-      background-color: #333;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+<!-- Fonte Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+<!-- Ícones Bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    .menu-toggle, .search-icon {
-      font-size: 22px;
-      cursor: pointer;
-    }
+<style>
+/* =======================================
+   VARIÁVEIS DE COR (modo claro/escuro)
+======================================= */
+/* =======================================
+   VARIÁVEIS DE COR (modo claro/escuro)
+======================================= */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1f1f1f;
+  --card-bg: #f8fafc;
+  --shadow-color: rgba(0,0,0,0.08);
+  --muted-text: #6c757d;
+  --menu-text: #2b2b2b;
 
-    .sidebar {
-      height: 100%;
-      width: 0;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #222;
-      overflow-x: hidden;
-      transition: 0.3s;
-      padding-top: 60px;
-      z-index: 2;
-    }
+  /* Funil de conversão */
+  --funnel-bg: #e2e8f0;
+  --funnel-step-bg: #cbd5e1;
+  --funnel-bar-gradient: linear-gradient(90deg, #a855f7, #9333ea);
+  --funnel-text-color: #1f1f1f;
+}
 
-    .sidebar a {
-      padding: 10px 25px;
-      text-decoration: none;
-      font-size: 18px;
-      color: #fff;
-      display: block;
-    }
+.dark-mode {
+  --bg-color: #121212;
+  --text-color: #eaeaea;
+  --card-bg: #181818;
+  --shadow-color: rgba(0,0,0,0.5);
+  --muted-text: #a0a0a0;
+  --menu-text: #bfbfbf;
 
-    .sidebar a:hover {
-      background-color: #444;
-    }
+  /* Funil de conversão */
+  --funnel-bg: #0f172a;
+  --funnel-step-bg: #1e293b;
+  --funnel-bar-gradient: linear-gradient(90deg, #9333ea, #a855f7);
+  --funnel-text-color: #e2e8f0;
+}
 
-    .main {
-      padding: 20px;
-      transition: margin-left .3s;
-    }
+/* =======================================
+   BASE E CORPO
+======================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+body, footer, .logo-square, .logo-text, .card-valor, .card-valor1, .card-resumo {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
 
-    .search-box {
-      display: none;
-      background: white;
-      padding: 5px;
-      border-radius: 5px;
-      margin-right: 10px;
-    }
+/* =======================================
+   RODAPÉ FIXO
+======================================= */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  font-size: 14px;
+  box-shadow: 0 -2px 10px var(--shadow-color);
+  z-index: 1000;
+}
+.footer-left { display: flex; align-items: center; gap: 8px; font-family: 'Poppins', sans-serif; }
+.logo-square {
+  width: 28px;
+  height: 28px;
+  background: var(--bg-color);
+  border: 2px solid var(--text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-color);
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+.logo-square:hover { transform: scale(1.06); }
+.logo-text { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-color); }
 
-    .search-box input {
-      border: none;
-      outline: none;
-      padding: 5px;
-    }
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+#toggle-theme, #menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+#toggle-theme { font-size: 23px; }
+#menu-btn { font-size: 18px; }
+#toggle-theme:hover, #menu-btn:hover { transform: scale(1.05); }
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-    }
+/* =======================================
+   CARDS DO DASHBOARD
+======================================= */
+.card-valor, .card-valor1 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 600px;
+  width: 100%;
+  padding: 20px 16px;
+  border-radius: 10px;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px var(--shadow-color);
+}
+.icon-box, .icon-box1 { font-size: 25px; color: var(--muted-text); }
+.info-box, .info-box1 { display: flex; flex-direction: column; }
+.titulo, .titulo1 { font-size: 15px; font-weight: 550; color: var(--muted-text); }
+.valor { font-size: 17px; font-weight: bold; color: green; margin-top: 3px; }
+.valor1 { font-size: 17px; font-weight: bold; color: #00aaff; margin-top: 3px; }
 
-    @media (max-width: 600px) {
-      .search-box input {
-        width: 150px;
-      }
-    }
-  </style>
+.info-icon {
+  position: absolute;
+  top: 15px;
+  right: 12px;
+  font-size: 18px;
+  color: var(--muted-text);
+  cursor: pointer;
+}
+.info-icon:hover { color: #007bff; }
+
+.card-resumo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 600px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px var(--shadow-color);
+}
+.card-resumo .info-box { display: flex; flex-direction: column; justify-content: center; }
+.card-resumo .titulo { font-size: 15px; color: var(--muted-text); font-weight: 600; }
+.card-resumo button {
+  background-color: #007bff;
+  width: 150px;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+.card-resumo button:hover { transform: scale(1.05); }
+
+/* =======================================
+   MENU LATERAL (AGORA IGUAL AO DASHBOARD)
+======================================= */
+#side-menu {
+  position: fixed;
+  top: 0;
+  right: -50%;
+  width: 50%;
+  height: 100%;
+  background-color: var(--card-bg);
+  box-shadow: -2px 0 10px var(--shadow-color);
+  transition: right 0.3s ease;
+  z-index: 1002;
+  padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#side-menu.active { right: 0; }
+
+#close-menu {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 25px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--menu-text);
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+#close-menu:hover { opacity: 1; }
+
+.side-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--menu-text);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s, opacity 0.2s;
+  opacity: 0.85;
+}
+.side-menu-item:hover { background-color: rgba(0,0,0,0.05); opacity: 1; }
+.side-menu-item i {
+  font-size: 22px;
+  color: var(--menu-text);
+  opacity: 0.85;
+}
+
+/* =======================================
+   TÍTULO DO DASHBOARD
+======================================= */
+h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* =======================================
+   FUNIL DE CONVERSÃO
+======================================= */
+.funnel-card {
+  background: var(--card-bg);
+  color: var(--funnel-text-color);
+  border-radius: 16px;
+  padding: 24px;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  max-width: 420px;
+}
+
+.funnel-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--funnel-text-color);
+  text-align: left;
+}
+
+.funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.funnel-step {
+  position: relative;
+  background: var(--funnel-step-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 36px;
+}
+
+.funnel-step .bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--funnel-bar-gradient);
+  width: var(--w);
+  border-radius: 10px;
+  animation: grow 1.3s ease forwards;
+}
+
+.funnel-step .text {
+  position: relative;
+  z-index: 2;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 36px;
+  padding-left: 12px;
+  color: var(--funnel-text-color);
+}
+
+@keyframes grow {
+  from { width: 0; }
+  to { width: var(--w); }
+}
+
+/* 💡 Responsivo */
+@media (max-width: 480px) {
+  .funnel-card {
+    padding: 16px;
+    max-width: 100%;
+  }
+  .funnel-step .text {
+    font-size: 13px;
+  }
+
+ .periodo-container {
+  width: 320px;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+}
+
+/* caixa principal */
+.periodo-select {
+  background-color: var(--card-bg);
+  border: 1px solid rgba(0,0,0,0.15);     /* 👈 borda mais forte */
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-color);
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px var(--shadow-color);
+  transition: 
+    background-color 0.4s ease, 
+    color 0.4s ease, 
+    border-color 0.4s ease, 
+    box-shadow 0.4s ease;
+}
+
+/* leve destaque ao passar o mouse */
+.periodo-select:hover {
+  filter: brightness(1.05);
+}
+
+/* borda mais visível também no modo escuro */
+.dark-mode .periodo-select {
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.periodo-label {
+  position: absolute;
+  top: -9px;
+  left: 10px;
+  background-color: var(--card-bg);
+  padding: 0 6px;
+  font-size: 12px;
+  color: var(--muted-text);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.periodo-texto {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: color 0.4s ease;
+}
+
+.periodo-icon {
+  font-size: 14px;
+  color: var(--muted-text);
+  transition: color 0.4s ease;
+}
+  
+</style>
 </head>
-<body>
 
-  <header>
-    <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
-    <div class="top-actions">
-      <div class="search-box" id="searchBox">
-        <input type="text" placeholder="Pesquisar...">
-      </div>
-      <span class="search-icon" onclick="toggleSearch()">🔍</span>
+<h1 style="font-family: 'Poppins', sans-serif; font-size:20px; color: var(--text-color); font-weight:500;">
+  Dashboard
+</h1>
+
+
+
+
+<!-- Card Atualizar Dados -->
+<div class="card-resumo">
+  <div class="info-box">
+    <span class="titulo">Atualizar Dados</span>
+  </div>
+  <button id="btn-atualizar">Atualizar</button>
+</div>
+
+<div class="periodo-container">
+  <div class="periodo-select">
+    <span class="periodo-label">Período</span>
+    <span class="periodo-texto">Hoje</span>
+    <span class="periodo-icon"><i class="bi bi-chevron-down"></i></span>
+  </div>
+</div>
+
+<!-- Card Faturamento -->
+<div class="card-valor">
+  <div class="icon-box"><i class="bi bi-cash-coin"></i></div>
+  <div class="info-box">
+    <span class="titulo">Faturamento</span>
+    <span class="valor" id="valor">100.00MZN$</span>
+  </div>
+  <i class="bi bi-info-circle info-icon"></i>
+</div>
+
+<!-- Card Vendas -->
+<div class="card-valor1">
+  <div class="icon-box1"><i class="bi bi-cart-check-fill"></i></div>
+  <div class="info-box1">
+    <span class="titulo1">Vendas Realizadas</span>
+    <span class="valor1" id="valor1">3</span>
+  </div>
+  <i class="bi bi-info-circle info-icon"></i>
+</div>
+
+<div class="card-valor1">
+  <div class="icon-box1"><i class="bi bi-graph-up-arrow"></i></div>
+  <div class="info-box1">
+    <span class="titulo1">Taxa De Conversão</span>
+    <span class="valor1" id="valor1">3%</span>
+  </div>
+  <i class="bi bi-info-circle info-icon"></i>
+</div>
+
+<!-- MENU LATERAL -->
+<div id="side-menu">
+  <button id="close-menu" aria-label="Fechar menu"><i class="bi bi-chevron-left"></i></button>
+  <div class="side-menu-item"><i class="bi bi-house"></i> Dashboard</div>
+  <div class="side-menu-item"><i class="bi bi-box-seam"></i> Produtos</div>
+  <div class="side-menu-item"><i class="bi bi-cash-stack"></i> Meu checkout</div>
+  <div class="side-menu-item"><i class="bi bi-credit-card-fill"></i> Financeiro</div>
+  <div class="side-menu-item"><i class="bi bi-file-earmark-bar-graph"></i> Relatório</div>
+</div>
+
+<div class="funnel-card">
+  <div class="funnel-header">
+    <h3>Funil de Conversão (Meta Ads)</h3>
+  </div>
+
+  <div class="funnel">
+    <div class="funnel-step" data-label="Cliques" data-value="100%">
+      <div class="bar" style="--w:100%"></div>
+      <span class="text">Cliques — 100%</span>
     </div>
-  </header>
 
-  <div class="sidebar" id="sidebar">
-    <a href="#">📦 Meus Produtos</a>
-    <a href="#">💰 Minhas Vendas</a>
-    <a href="#">💳 Checkout</a>
-    <a href="#">🗂️ Relatórios</a>
+    <div class="funnel-step" data-label="Vis. Página" data-value="92.9%">
+      <div class="bar" style="--w:92.9%"></div>
+      <span class="text">Vis. Página — 92.9%</span>
+    </div>
+
+    <div class="funnel-step" data-label="ICs" data-value="28.6%">
+      <div class="bar" style="--w:28.6%"></div>
+      <span class="text">ICs — 28.6%</span>
+    </div>
+
+    <div class="funnel-step" data-label="Vendas Inic." data-value="14.3%">
+      <div class="bar" style="--w:14.3%"></div>
+      <span class="text">Vendas Inic. — 14.3%</span>
+    </div>
+
+    <div class="funnel-step" data-label="Vendas Aprov." data-value="7.1%">
+      <div class="bar" style="--w:7.1%"></div>
+      <span class="text">Vendas Aprov. — 7.1%</span>
+    </div>
   </div>
+</div>
 
-  <div class="main" id="mainContent">
-    <h2>Bem-vindo ao painel</h2>
-    <p>Aqui estarão seus dados de vendas.</p>
+
+<!-- Rodapé -->
+<footer>
+  <div class="footer-left">
+    <div class="logo-square">V</div>
+    <div class="logo-text">Vendoo</div>
   </div>
+  <div class="footer-right">
+    <button id="toggle-theme" aria-label="Alternar tema">
+      <i id="theme-icon" class="bi bi-sun"></i>
+    </button>
+    <button id="menu-btn" aria-label="Abrir menu">
+      Menu <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</footer>
 
-  <script>
-    function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
-    }
+<script>
+// Alternar tema
+const toggleBtn = document.getElementById('toggle-theme');
+toggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const themeIcon = document.getElementById('theme-icon');
+  if(document.body.classList.contains('dark-mode')) themeIcon.classList.replace('bi-sun','bi-moon');
+  else themeIcon.classList.replace('bi-moon','bi-sun');
+});
+if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+  document.body.classList.add('dark-mode');
+  document.getElementById('theme-icon').classList.replace('bi-sun','bi-moon');
+}
 
-    function toggleSearch() {
-      const box = document.getElementById("searchBox");
-      box.style.display = box.style.display === "block" ? "none" : "block";
-    }
+// Botão Atualizar (placeholder)
+document.getElementById("btn-atualizar").addEventListener("click", () => {
+  alert("Dados do Dashboard atualizados!");
+});
 
-    // Fecha o menu lateral ao clicar fora
-    document.addEventListener('click', function (event) {
-      const sidebar = document.getElementById('sidebar');
-      const toggle = document.querySelector('.menu-toggle');
-      if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-        sidebar.style.width = '0';
-      }
-    });
-  </script>
+// Botão Menu
+const menuBtn = document.getElementById('menu-btn');
+const sideMenu = document.getElementById('side-menu');
+const closeMenu = document.getElementById('close-menu');
+
+menuBtn.addEventListener('click', () => sideMenu.classList.add('active'));
+closeMenu.addEventListener('click', () => sideMenu.classList.remove('active'));
+</script>
 
 </body>
 </html>
