@@ -491,33 +491,46 @@ h1 {
     </button>
   </div>
 </footer>
-
 <script>
 // Alternar tema
 const toggleBtn = document.getElementById('toggle-theme');
 toggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   const themeIcon = document.getElementById('theme-icon');
-  if(document.body.classList.contains('dark-mode')) themeIcon.classList.replace('bi-sun','bi-moon');
-  else themeIcon.classList.replace('bi-moon','bi-sun');
+  if (document.body.classList.contains('dark-mode')) {
+    themeIcon.classList.replace('bi-sun', 'bi-moon');
+  } else {
+    themeIcon.classList.replace('bi-moon', 'bi-sun');
+  }
 });
-if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+
+// Ajuste automático para modo escuro do sistema
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   document.body.classList.add('dark-mode');
-  document.getElementById('theme-icon').classList.replace('bi-sun','bi-moon');
+  document.getElementById('theme-icon').classList.replace('bi-sun', 'bi-moon');
 }
 
-// Botão Atualizar (placeholder)
+/*  
+❗ REMOVIDO O ERRO  
+O código abaixo travava TUDO porque "btn-atualizar" não existe:
+
 document.getElementById("btn-atualizar").addEventListener("click", () => {
   alert("Dados do Dashboard atualizados!");
 });
+*/
 
 // Botão Menu
 const menuBtn = document.getElementById('menu-btn');
 const sideMenu = document.getElementById('side-menu');
 const closeMenu = document.getElementById('close-menu');
 
-menuBtn.addEventListener('click', () => sideMenu.classList.add('active'));
-closeMenu.addEventListener('click', () => sideMenu.classList.remove('active'));
+menuBtn.addEventListener('click', () => {
+  sideMenu.classList.add('active');
+});
+
+closeMenu.addEventListener('click', () => {
+  sideMenu.classList.remove('active');
+});
 </script>
 
 </body>
